@@ -1,0 +1,8 @@
+blog:
+  uploadPath: /usr/java/tomcat/webapps/upload/
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://111.230.115.170/manage
+    username: root
+    password: qcz_left1314

@@ -1,0 +1,62 @@
+@CHARSET "UTF-8";
+
+#searchForm {
+	padding: 5px 0 5px 15px;
+}
+
+table th div {
+	text-align: center;
+}
+
+.ui-jqgrid .ui-jqgrid-caption {
+	font-size: 20px;
+	background: #dff0d8;
+}
+
+.ui-jqgrid-title {
+	font-weight: bold;
+}
+
+.ui-th-column {
+	background: #f5f5f5;
+}
+
+#operator {
+	bottom: 0px;
+	position: fixed;
+	z-index: 9999;
+	width: 77%;
+	text-align: center;
+	padding: 10px;
+	background: white;
+}
+
+.table>tbody>tr>td {
+	vertical-align: middle;
+	margin-bottom: 0;
+}
+
+.table>tbody>tr>td>label {
+	margin-bottom: 0;
+}
+
+#formDiv {
+	margin: 0 auto;
+	width: 80%;
+	height: 100%;
+}
+
+.ui-jqgrid-bdiv {
+	max-height: 600px;
+}
+
+.choose {
+	position: absolute;
+	z-index: 999;
+	right: 0;
+}
+
+.chooseDiv {
+	 width: 100%;
+	 position: relative;
+}

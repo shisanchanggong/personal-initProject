@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.foo.manage.common.base.BaseDao">
+	<select id="find" resultType="java.util.HashMap">
+		SELECT ${columnsStr} FROM ${table} WHERE ${fieldName} = #{id}
+	</select>
+	
+	<select id="findBy" resultType="java.util.HashMap">
+		SELECT ${columnsStr} FROM ${table} WHERE ${cloumn} = #{fieldValue}
+	</select>
+	
+	<select id="findByFieldList" resultType="java.util.HashMap">
+		SELECT ${columnsStr} FROM ${table} <where> <foreach item="item" collection="list" separator="and"><if test="item.value != null and item.value !=''">${item.cloumn} = #{item.value}</if></foreach></where>
+		<if test="limitParams != null">
+			<if test="limitParams.orderBy != null and limitParams.orderBy != ''">
+				ORDER BY ${limitParams.orderBy}
+			</if>
+			LIMIT #{limitParams.start},#{limitParams.size}
+		</if>
+	</select>
+	
+	<select id="findByFieldListLike" resultType="java.util.HashMap">
+		SELECT ${columnsStr} FROM ${table} <where> <foreach item="item" collection="list" separator="and"><if test="item.value != null and item.value !=''">${item.cloumn} LIKE CONCAT('%',#{item.value},'%')</if></foreach></where>
+		<if test="limitParams != null">
+			<if test="limitParams.orderBy != null and limitParams.orderBy != ''">
+				ORDER BY ${limitParams.orderBy}
+			</if>
+			LIMIT #{limitParams.start},#{limitParams.size}
+		</if>
+	</select>
+	
+	<select id="findAll" resultType="java.util.HashMap">
+		SELECT ${columnsStr} FROM ${table}
+		<if test="limitParams != null">
+			<if test="limitParams.orderBy != null and limitParams.orderBy != ''">
+				ORDER BY ${limitParams.orderBy}
+			</if>
+			LIMIT #{limitParams.start},#{limitParams.size}
+		</if>
+	</select>
+
+	<select id="count" resultType="long">
+		SELECT COUNT(0) FROM ${table}
+	</select>
+
+	<select id="countBy" resultType="long">
+		SELECT COUNT(0) FROM ${table} WHERE ${cloumn} = #{fieldValue}
+	</select>
+
+	<select id="countByFieldList" resultType="long">
+		SELECT COUNT(0) FROM ${table} <where> <foreach item="item" collection="list" separator="and"><if test="item.value != null and item.value !=''">${item.cloumn} = #{item.value}</if></foreach></where>
+	</select>
+
+	<select id="countByFieldListLike" resultType="long">
+		SELECT COUNT(0) FROM ${table} <where> <foreach item="item" collection="list" separator="and"><if test="item.value != null and item.value !=''">${item.cloumn} LIKE CONCAT('%',#{item.value},'%')</if></foreach></where>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO ${table}(${cloumns}) VALUES(<foreach item="item" index="index" collection="list" separator=",">#{item}</foreach>)
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM ${table} WHERE ${fieldName} = #{fieldValue}
+	</delete>
+	<delete id="deleteBy">
+		DELETE FROM ${table} WHERE ${fieldName} = #{fieldValue}
+	</delete>
+	
+	<delete id="deleteByFieldList">
+		DELETE FROM ${table} WHERE <foreach item="item" collection="list" separator="and"><if test="item.value != null and item.value !=''">${item.cloumn} = #{item.value}</if></foreach>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="batchDelete">
+		DELETE FROM ${table} WHERE ${idCloumn} IN(<foreach item="item" collection="ids" separator=",">#{item}</foreach>)
+	</delete>
+	
+	<update id="update">
+		UPDATE ${table} SET <foreach item="item" collection="list" separator=",">${item.cloumn} = #{item.value}</foreach>WHERE ${idField.cloumn} = #{idField.value}
+	</update>
+</mapper>
