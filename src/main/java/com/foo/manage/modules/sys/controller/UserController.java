@@ -50,4 +50,14 @@ public class UserController extends BaseController<User> {
 		logger.info("the called method : save");
 		return userService.save(data);
 	}
+	
+	/**
+	 * 验证用户名唯一性
+	 */
+	@RequestMapping("/validateLoginName")
+	@ResponseBody
+	public ServiceResult validateLoginName(String loginName) {
+		logger.info("the called method : validateLoginName");
+		return userService.validateLoginName(loginName);
+	}
 }

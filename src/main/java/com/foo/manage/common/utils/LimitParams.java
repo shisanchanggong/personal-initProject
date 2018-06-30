@@ -1,7 +1,7 @@
 package com.foo.manage.common.utils;
 
 /**
- * 
+ * 分页参数，用于分页查询，将pageRequest对象中的分页转换成数据库查询参数
  * @author changzhongq
  * @time 2018年6月15日 下午11:37:30
  */

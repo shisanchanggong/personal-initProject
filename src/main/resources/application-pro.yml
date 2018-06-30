@@ -3,3 +3,6 @@ blog:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://your's ip/manage
+    username: root
+    password: 

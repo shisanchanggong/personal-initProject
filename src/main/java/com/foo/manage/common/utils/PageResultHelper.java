@@ -72,7 +72,7 @@ public class PageResultHelper extends PageHelper {
 	}
 
 	/**
-	 * 直接执行分页查询
+	 * 直接执行分页查询（无过滤条件，直接查询）
 	 * @param clazz
 	 * @param pageReq
 	 * @return
@@ -82,7 +82,7 @@ public class PageResultHelper extends PageHelper {
 	}
 
 	/**
-	 * 默认查询方式 模糊搜索
+	 * 默认查询方式 带参数的模糊搜索
 	 */
 	public <T> PageResult exeQuery(Class<?> clazz, PageRequest pageReq) {
 		return exeQuery(clazz, pageReq, true);

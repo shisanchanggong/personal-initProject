@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 操作日志
+ * 操作日志，如果方法需要记录，则在该方法上加入此注解
  * @author changzhongq
  * @time 2018年6月22日 下午4:37:04
  */

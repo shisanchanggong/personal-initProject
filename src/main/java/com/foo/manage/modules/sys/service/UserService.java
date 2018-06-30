@@ -24,4 +24,15 @@ public class UserService extends BaseService {
 		return this.insertOrUpdate(User.class, user);
 	}
 
+	/**
+	 * 验证用户名唯一性
+	 */
+	public ServiceResult validateLoginName(String loginName) {
+		if (this.findBy(User.class, "loginName", loginName) == null) {// 用户名不存在，可以使用
+			return ServiceResult.newOkInstance("恭喜您，此登录名可以使用。", null);
+		} else {// 用户名存在，验证失败
+			return ServiceResult.newErrorInstance("登录名已经存在，请更换！");
+		}
+	}
+
 }

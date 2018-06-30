@@ -13,12 +13,12 @@
 <body>
 	<div id="formDiv" style="margin-top: 10px;">
 		<div class="col-sm-12 text-right">
-			<form id="vueform" :rules="rules" @submit="onSubmit" @valid-error="onValid">
+			<form action="javascript:void(0);" id="vueform" :rules="rules" @submit="onSubmit" @valid-error="onValid">
 				<div>
 					<table class="table table-bordered">
 						<tr>
 							<td style="width: 15%;"><label>角色名称：</label></td>
-							<td style="width: 35%;"><input v-model="data.roleName" id="roleName" name="roleName" class="form-control"/></td>
+							<td style="width: 35%;"><input v-model="data.roleName" id="roleName" required name="roleName" class="form-control"/></td>
 							<td style="width: 15%;"><label>角色标志：</label></td>
 							<td style="width: 35%;"><input v-model="data.roleSign" id="roleSign" name="roleSign" class="form-control"/></td>
 						</tr>

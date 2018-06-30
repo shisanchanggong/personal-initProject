@@ -4,7 +4,6 @@ import java.util.regex.Pattern;
 
 /**
  * 字符串处理工具
- * 
  * @author quchangzhong
  * @time 2018年2月12日 上午11:34:33
  */

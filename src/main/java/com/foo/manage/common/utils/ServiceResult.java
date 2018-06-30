@@ -32,7 +32,7 @@ public class ServiceResult {
 	}
 
 	public static ServiceResult newErrorInstance(String message) {
-		return new ServiceResult(true, message, null);
+		return new ServiceResult(false, message, null);
 	}
 
 	public boolean getIsSuccess() {

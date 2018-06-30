@@ -13,12 +13,12 @@
 <body>
 	<div id="formDiv" style="margin-top: 10px;">
 		<div class="col-sm-12 text-right">
-			<form id="vueform" :rules="rules" @submit="onSubmit" @valid-error="onValid">
+			<form action="javascript:void(0);" id="vueform" :rules="rules" @submit="onSubmit" @valid-error="onValid">
 				<div>
 					<table class="table table-bordered">
 						<tr>
 							<td style="width: 15%;"><label>菜单名称：</label></td>
-							<td style="width: 35%;"><input v-model="data.menuName" id="menuName" name="menuName" class="form-control"/></td>
+							<td style="width: 35%;"><input v-model="data.menuName" required id="menuName" name="menuName" class="form-control"/></td>
 							<td style="width: 15%;"><label>url：</label></td>
 							<td style="width: 35%;"><input v-model="data.url" id="url" name="url" class="form-control"/></td>
 						</tr>

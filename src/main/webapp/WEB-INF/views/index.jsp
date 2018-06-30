@@ -207,8 +207,11 @@ body {
 					return false;
 				});
 				$(".menua").click(function(event) {
-//		 			$("#demo-list li.active").removeClass("active");
-//		 			$(this).addClass("active");
+// 		 			$("#demo-list li.active").removeClass("active");
+// 		 			$(this).parent("li").addClass("active");
+					if ($(this).attr("href") == "#") {
+						return;
+					}
 					var thisTitle = "";
 					$(this).parents("li").each(function(){
 						thisTitle = $(this).attr("data-title") + " > " + thisTitle;

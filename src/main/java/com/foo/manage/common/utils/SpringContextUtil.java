@@ -3,7 +3,7 @@ package com.foo.manage.common.utils;
 import org.springframework.context.ApplicationContext;
 
 /**
- * 
+ * spring上下文工具类
  * @author changzhongq
  * @time 2018年6月16日 上午12:22:20
  */

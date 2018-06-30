@@ -11,6 +11,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
+/**
+ * 文件处理工具
+ * @author changzhongq
+ */
 public class FileUtils {
 
 	public static void uploadFile(byte[] file, String filePath, String fileName) throws Exception {

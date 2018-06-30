@@ -13,19 +13,22 @@
 <body>
 	<div id="formDiv" style="margin-top: 10px;">
 		<div class="col-sm-12 text-right">
-			<form id="vueform" :rules="rules" @submit="onSubmit" @valid-error="onValid">
+			<form action="javascript:void(0);" id="vueform" :rules="rules" @submit="onSubmit" @valid-error="onValid">
 				<div>
 					<table class="table table-bordered">
 						<tr>
 							<td style="width: 15%;"><label>用户名称：</label></td>
-							<td style="width: 35%;"><input v-model="data.userName" id="userName" name="userName" class="form-control"/></td>
+							<td style="width: 35%;"><input v-model="data.userName" id="userName" name="userName" required class="form-control"/></td>
 							<td style="width: 15%;"><label>登录名：</label></td>
-							<td style="width: 35%;"><input v-model="data.loginName" id="loginName" name="loginName" class="form-control"/></td>
+							<td style="width: 35%;">
+								<input v-model="data.loginName" id="loginName" name="loginName" required class="form-control"/>
+								<div id="loginNameInfo" style="display: none;"></div>
+							</td>
 						</tr>
 						<tr>
 							<td><label>性别：</label></td>
 							<td>
-								<select v-model="data.userSex" id="userSex" name="userSex" class="form-control">
+								<select v-model="data.userSex" id="userSex" name="userSex" required class="form-control">
 									<option value="M">男</option>
 									<option value="F">女</option>
 								</select>
@@ -64,8 +67,11 @@
 </body>
 <script type="text/javascript">
 var id = "${param.id}";
+var validateStatus = true;// 验证状态
+var oldLoginName = "";
 var vmData = {
 	data : {
+		loginName : '',
 		departmentId : '',
 		departmentName : ''
 	},
@@ -85,10 +91,12 @@ var vm = new Vue({
 			vmData.data = postAjaxGet(_ctxRoot + "/user/data/" + id);
 			vmData.data.createTime = new Date(vmData.data.createTime);
 			vmData.data.updateTime = new Date(vmData.data.updateTime);
+			oldLoginName = vmData.data.loginName;
 		}
 	},
 	methods : {
 		onSubmit : function() {
+			if (!validateStatus) return false;
 			var date = new Date();
 			if (!id) {
 				vmData.data.createTime = date;
@@ -116,7 +124,18 @@ var vm = new Vue({
 		
 	},
 	watch : {
-		
+		'data.loginName' : function(val, oldVal) {
+			if (!val && val == oldLoginName) return;
+			$.post(_ctxRoot + "/user/validateLoginName", {loginName:val}, function(msg){
+				if (msg.isSuccess) {
+					$("#loginNameInfo").hide();
+					validateStatus = true;
+				} else {
+					$("#loginNameInfo").css("color","red").html(msg.message).show();
+					validateStatus = false;
+				}
+			});
+		}
 	}
 });
 

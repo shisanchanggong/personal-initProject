@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 操作类 加在类上
+ * 操作类 加在类上，如果需要记录表名，则在类上加入此注解
  * @author changzhongq
  * @time 2018年6月23日 下午12:05:56
  */

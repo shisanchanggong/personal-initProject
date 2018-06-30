@@ -7,7 +7,7 @@ import org.apache.shiro.util.ByteSource;
 import com.foo.manage.modules.sys.entity.CurrentUser;
 
 /**
- * 
+ * shiro 工具类，主要用于获取session中的当前人信息及设置当前人信息，以及加密方法
  * @author quchangzhong
  * @time 2018年2月20日 下午8:11:30
  */

@@ -41,6 +41,8 @@ public interface BaseDao {
 	 */
 	int deleteBy(@Param("table") String table, @Param("fieldName") String fieldName, @Param("fieldValue") Object fieldValue);
 
+	int deleteByFieldList(@Param("table") String table, @Param("list") List<Field> fields);
+	
 	/**
 	 * 批量删除记录
 	 * @param table
@@ -92,8 +94,6 @@ public interface BaseDao {
 	List<HashMap<String, Object>> findByFieldList(@Param("table") String table, @Param("columnsStr") String columnsStr, @Param("list") List<Field> fields, @Param("limitParams") LimitParams limitParams);
 
 	List<HashMap<String, Object>> findByFieldListLike(@Param("table") String table, @Param("columnsStr") String columnsStr, @Param("list") List<Field> fields, @Param("limitParams") LimitParams limitParams);
-
-	int deleteByFieldList(@Param("table") String table, @Param("list") List<Field> fields);
 
 	/**
 	 * 查询总记录数
