@@ -125,7 +125,7 @@ var vm = new Vue({
 	},
 	watch : {
 		'data.loginName' : function(val, oldVal) {
-			if (!val && val == oldLoginName) return;
+			if (!val || val == oldLoginName) return;
 			$.post(_ctxRoot + "/user/validateLoginName", {loginName:val}, function(msg){
 				if (msg.isSuccess) {
 					$("#loginNameInfo").hide();
