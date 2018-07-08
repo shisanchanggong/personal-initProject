@@ -13,6 +13,9 @@ Date.prototype.Format = function (fmt) { //author: meizz
     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
+
+var httpHeader = "http://localhost:8080";
+
 $(function() {
 	if ($("#pager").length > 0) {
 		// 更改jqgrid默认配置
@@ -122,9 +125,11 @@ function postAjaxGet(url) {
  * 打开表单
  * title 标题
  * url 请求路径
+ * isTop 是否在顶层的基础上打开图层，默认true
  */
-function openForm(title, url, area){
-	layer.open({
+function openForm(title, url, area, isTop){
+	isTop = isTop != undefined ? isTop : true;
+	var options = {
 		type : 2,
 		title : title,
 		content : url,
@@ -138,7 +143,12 @@ function openForm(title, url, area){
 		end : function() {
 			$("#dataTable").trigger("reloadGrid");
 		}
-	});
+	};
+	if (isTop) {
+		top.layer.open(options);
+	} else {
+		layer.open(options);
+	}
 }
 
 
@@ -184,4 +194,46 @@ function deleteItem(id,name,module){
 			}
 		});
 	});
+}
+
+/*
+ * 导出方法
+ * dataTable jqgrid表格ID
+ * module 模块名
+ * sheetName 导出表格名
+ * fileName Excel文件名 （可选，默认为 表格名.xls）
+ */
+function exportRecord(dataTable, module, sheetName, fileName) {
+	var tableObj = $("#dataTable");
+	var colModel = tableObj.jqGrid("getGridParam","colModel");
+	var titleLabels = [];
+	var titleNames = [];
+	for ( var i in colModel) {
+		var item = colModel[i];
+		if (item.hidden == true || item.name == "operator" || item.name == "rn" || item.name == "cb") {
+			continue;
+		}
+		titleLabels.push(item.label);
+		titleNames.push(item.index);
+	}
+	var exportUrl = httpHeader + tableObj.getGridParam("url");
+	if (exportUrl.indexOf("?") != -1) {
+		exportUrl += "&";
+	} else {
+		exportUrl += "?";
+	}
+	exportUrl += "page=1&rows=9999&";
+	var postData = tableObj.getGridParam("postData");
+	for ( var key in postData) {
+		exportUrl += (key + "=" + encodeURIComponent(postData[key]) + "&");
+	}
+	exportUrl = exportUrl.substring(0, exportUrl.length - 1);
+	var data = {
+			titleLabels : titleLabels,
+			titleNames : titleNames,
+			sheetName : sheetName,
+			exportUrl : exportUrl,
+			fileName : fileName ? fileName : sheetName + ".xls"
+	};
+	window.location.href = _ctxRoot + "/"+ module +"/export?param=" + encodeURIComponent(JSON.stringify(data));
 }

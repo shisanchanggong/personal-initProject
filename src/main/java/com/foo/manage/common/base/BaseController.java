@@ -1,11 +1,16 @@
 package com.foo.manage.common.base;
 
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +30,7 @@ import com.foo.manage.common.utils.StringUtils;
  * @author changzhongq
  * @time 2018年6月11日 下午5:10:55
  */
+@SuppressWarnings("unchecked")
 public abstract class BaseController<T> {
 
 	public Class<T> classT;
@@ -65,7 +71,6 @@ public abstract class BaseController<T> {
 	 * @param pageReq
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping("/list")
 	@ResponseBody
 	@OperateLog(operationType = Constants.OPERATE_TYPE_GET, operationName = "查询列表")
@@ -84,7 +89,6 @@ public abstract class BaseController<T> {
 	 * @param pageReq
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/list", params = { "like" })
 	@ResponseBody
 	@OperateLog(operationType = Constants.OPERATE_TYPE_GET, operationName = "模糊查询列表")
@@ -97,11 +101,45 @@ public abstract class BaseController<T> {
 		return new PageResultHelper().exeQuery(classT, pageReq, paramMap);
 	}
 
-	@SuppressWarnings("unchecked")
+	@RequestMapping("/export")
+	@ResponseBody
+	public void export(HttpServletRequest request, HttpServletResponse response) {
+		String param = (String) request.getParameter("param");
+		Map<String, Object> paramMap = (Map<String, Object>) JSONUtils.parse(StringUtils.isEmpty(param) ? "{}" : param);
+		// 创建HSSFWorkbook
+		try {
+			HSSFWorkbook wb = baseService.getHSSFWorkbook(paramMap);
+			response.reset();
+			response.setContentType("application/octet-stream; charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode((String) paramMap.get("fileName"), "UTF-8"));
+			OutputStream os = response.getOutputStream();
+			wb.write(os);
+			os.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public BaseController() {
 		Type genType = getClass().getGenericSuperclass();
 		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
 		classT = (Class<T>) params[0];
 	}
 
+	// 发送响应流方法
+	public void setResponseHeader(HttpServletResponse response, String fileName) {
+		try {
+			try {
+				fileName = new String(fileName.getBytes(), "ISO8859-1");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			response.setContentType("application/octet-stream;charset=ISO8859-1");
+			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+			response.addHeader("Pargam", "no-cache");
+			response.addHeader("Cache-Control", "no-cache");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 }

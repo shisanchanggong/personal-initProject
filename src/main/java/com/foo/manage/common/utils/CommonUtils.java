@@ -82,13 +82,13 @@ public class CommonUtils {
 		}
 		return fields;
 	}
-	
+
 	/**
 	 * object对象到map的转换
 	 * @param obj object对象
 	 * @return map集合
 	 */
-	public static Map<String, Object> objToMap(Object obj){
+	public static Map<String, Object> objToMap(Object obj) {
 		Map<String, Object> map = new HashMap<>();
 		Class<?> clazz = obj.getClass();
 		Field[] fields = clazz.getDeclaredFields();
@@ -104,6 +104,40 @@ public class CommonUtils {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * object对象到map的转换(大写)
+	 * @param obj object对象
+	 * @return map集合
+	 */
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> objToMapUpper(Object obj) {
+		Map<String, Object> map = new HashMap<>();
+		if (obj instanceof Map) {
+			Map<String, Object> transMap = (Map<String, Object>) obj;
+			for (String key : transMap.keySet()) {
+				map.put(StringUtils.underUpperScoreName(key), transMap.get(key));
+			}
+		} else {
+			Class<?> clazz = obj.getClass();
+			Field[] fields = clazz.getDeclaredFields();
+			for (Field field : fields) {
+				String fieldName = field.getName();
+				if ("serialVersionUID".equals(fieldName)) {
+					continue;
+				}
+				field.setAccessible(true);
+				try {
+					map.put(StringUtils.underUpperScoreName(fieldName), field.get(obj));
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return map;

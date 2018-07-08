@@ -92,6 +92,7 @@ var vm = new Vue({
 			vmData.data.createTime = new Date(vmData.data.createTime);
 			vmData.data.updateTime = new Date(vmData.data.updateTime);
 			oldLoginName = vmData.data.loginName;
+			$("#loginName").attr("disabled", true);
 		}
 	},
 	methods : {
@@ -114,7 +115,7 @@ var vm = new Vue({
 			})
 		},
 		chooseDepartment : function() {
-			openForm("选择部门", _ctxRoot + "/department/departmentTreePage?departmentId=" + vmData.data.departmentId, ["30%", "99%"]);
+			openForm("选择部门", _ctxRoot + "/department/departmentTreePage?departmentId=" + vmData.data.departmentId, ["30%", "99%"], false);
 		},
 		onValid : function(){
         	layer.msg('数据验证不通过，请参照页面提示核对数据是否正确！', {icon: 2});

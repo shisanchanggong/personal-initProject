@@ -58,6 +58,10 @@
 	<insert id="insert">
 		INSERT INTO ${table}(${cloumns}) VALUES(<foreach item="item" index="index" collection="list" separator=",">#{item}</foreach>)
 	</insert>
+
+	<insert id="batchInsert">
+		INSERT INTO ${table}(${cloumns}) VALUES<foreach item="dataItem" collection="list" separator=","><foreach item="item" index="index" open="(" close=")" collection="dataItem" separator=",">#{item}</foreach></foreach>
+	</insert>
 	
 	<delete id="delete">
 		DELETE FROM ${table} WHERE ${fieldName} = #{fieldValue}

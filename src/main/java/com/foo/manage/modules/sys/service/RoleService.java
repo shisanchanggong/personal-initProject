@@ -1,5 +1,6 @@
 package com.foo.manage.modules.sys.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,13 +33,15 @@ public class RoleService extends BaseService {
 	@Transactional
 	public ServiceResult bindRole(String userId, String[] roles) {
 		this.deleteBy(UserRole.class, "userId", userId);
+		List<UserRole> userRoles = new ArrayList<>();
 		for (String roleId : roles) {
 			UserRole userRole = new UserRole();
 			userRole.setUserRoleId(UUIDUtils.getUUID());
 			userRole.setUserId(userId);
 			userRole.setRoleId(roleId);
-			this.insert(userRole);
+			userRoles.add(userRole);
 		}
+		this.batchInsert(userRoles.toArray());
 		return ServiceResult.newOkInstance(null);
 	}
 

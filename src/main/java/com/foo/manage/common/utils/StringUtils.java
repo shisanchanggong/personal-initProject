@@ -11,9 +11,7 @@ public class StringUtils {
 
 	/**
 	 * 驼峰命名字符串 转为下划线，全小写
-	 * 
 	 * @param str
-	 * @return
 	 */
 	public static String underScoreName(String str) {
 		StringBuilder sb = new StringBuilder();
@@ -34,9 +32,7 @@ public class StringUtils {
 
 	/**
 	 * 驼峰命名字符串 转为下划线，全大写
-	 * 
 	 * @param str
-	 * @return
 	 */
 	public static String underUpperScoreName(String str) {
 		StringBuilder sb = new StringBuilder();
@@ -57,9 +53,7 @@ public class StringUtils {
 
 	/**
 	 * 首字母大写,其它小写方法
-	 * 
 	 * @param str
-	 * @return
 	 */
 	public static String upperCase(String str) {
 		return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
@@ -67,9 +61,7 @@ public class StringUtils {
 
 	/**
 	 * 下划线转为驼峰命名
-	 * 
 	 * @param str
-	 * @return
 	 */
 	public static String camelCaseName(String str) {
 		StringBuilder sb = new StringBuilder();
@@ -80,7 +72,9 @@ public class StringUtils {
 		}
 		return sb.toString();
 	}
-
+	public static void main(String[] args) {
+		System.out.println(camelCaseName("LOCKED"));
+	}
 	public static boolean isEmpty(Object object) {
 		return object == null || "".equals(object);
 	}

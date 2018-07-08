@@ -94,6 +94,10 @@
 	function removeRecord() {
 		batchDelete(module);
 	}
+
+	function exportExecl() {
+		exportRecord("dataTable", module, "用户列表");
+	}
 	/*********************************crud end**********************************/
 </script>
 <body>
@@ -112,6 +116,9 @@
 			</a>
 			<a class='btn btn-danger' onClick="removeRecord()">
 				<span class="glyphicon glyphicon-remove"></span>&nbsp;删除
+			</a>
+			<a class='btn btn-primary' onClick="exportExecl()">
+				<span class="glyphicon glyphicon-export"></span>&nbsp;导出
 			</a>
 		</form>
 		<div class="col-xs-12">

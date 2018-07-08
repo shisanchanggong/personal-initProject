@@ -1,6 +1,11 @@
 package com.foo.manage.common.base;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,10 +15,13 @@ import java.util.Map.Entry;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.foo.manage.common.utils.CommonUtils;
+import com.foo.manage.common.utils.ExportUtils;
 import com.foo.manage.common.utils.LimitParams;
 import com.foo.manage.common.utils.PageRequest;
 import com.foo.manage.common.utils.ServiceResult;
@@ -180,14 +188,50 @@ public abstract class BaseService {
 	 * @param models
 	 */
 	@Transactional
-	public boolean batchInsert(Object[] models) {
-		for (Object model : models) {
-			Object insert = insert(model);
-			if (insert == null) {
-				return false;
+	public List<Object> batchInsert(Object[] models) {
+		Class<?> clazz = models[0].getClass();
+		String table = getTable(clazz);
+		List<Object> idValues = new ArrayList<>();
+		Field[] fields = clazz.getDeclaredFields();
+		// 存储需要更新的字段，用逗号隔开
+		StringBuilder cloumns = new StringBuilder();
+		Object idValue = null;
+		// 记录数据库字段
+		for (Field field : fields) {
+			String fieldName = field.getName();
+			if ("serialVersionUID".equals(fieldName)) {
+				continue;
 			}
+			cloumns.append(StringUtils.underUpperScoreName(fieldName)).append(",");
 		}
-		return true;
+		List<List<Object>> listLists = new ArrayList<List<Object>>();
+		// 需要插入的数据
+		for (Object model : models) {
+			List<Object> lists = new ArrayList<Object>();
+			for (Field field : fields) {
+				String fieldName = field.getName();
+				if ("serialVersionUID".equals(fieldName)) {
+					continue;
+				}
+				Object fieldValue = null;
+				// 设置可见性
+				field.setAccessible(true);
+				try {
+					fieldValue = field.get(model);
+					if (StringUtils.isEmpty(fieldValue) && field.getAnnotation(Id.class) != null) {
+						idValue = fieldValue = UUIDUtils.getUUID();
+						idValues.add(idValue);
+					}
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				lists.add(fieldValue);
+			}
+			listLists.add(lists);
+		}
+		return baseDao.batchInsert(table, cloumns.toString().substring(0, cloumns.toString().length() - 1), listLists) == models.length ? idValues : null;
 	}
 
 	/**
@@ -327,6 +371,35 @@ public abstract class BaseService {
 		String table = getTable(clazz);
 		List<com.foo.manage.common.base.Field> fields = CommonUtils.mapToField(map);
 		return baseDao.countByFieldListLike(table, fields);
+	}
+
+	/**
+	 * 获取HSSFWorkbook对象，使用URL方式调用Java接口，获取数据后按格式填充值
+	 * @param class1 
+	 * @param request
+	 * @throws IOException 
+	 */
+	public HSSFWorkbook getHSSFWorkbook(Map<String, Object> map) throws IOException{
+		String exportUrl = (String) map.get("exportUrl");
+		URL url = new URL(exportUrl);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.connect();
+		BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		StringBuilder result = new StringBuilder();
+		String line = "";
+		while ((line = br.readLine()) != null) {
+			result.append(line);
+		}
+		// 释放资源
+		br.close();
+		connection.disconnect();
+		
+		Map<String, Object> pageResult = (Map<String, Object>) JSONUtils.parse(result.toString());
+		List<?> rows = (List<?>) pageResult.get("rows");// 需要导出的数据，需要转换
+		List<String> titleLabels = (List<String>) map.get("titleLabels");// 列名，对应jqgrid的colModel中的label属性
+		List<String> titleNames = (List<String>) map.get("titleNames");// 列名标识，对应jqgrid的colModel中的index属性
+		String sheetName = (String) map.get("sheetName");// sheet名称
+		return ExportUtils.getHSSFWorkbook(sheetName, titleLabels, titleNames, rows, null);
 	}
 
 	/**

@@ -22,6 +22,8 @@ public interface BaseDao {
 	 * @return
 	 */
 	int insert(@Param("table") String table, @Param("cloumns") String cloumns, @Param("list") List<Object> list);
+	
+	int batchInsert(@Param("table") String table, @Param("cloumns") String cloumns, @Param("list") List<List<Object>> list);
 
 	/**
 	 * 单个删除

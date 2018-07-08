@@ -1,5 +1,13 @@
 package com.foo.manage.modules.index;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -12,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.foo.manage.common.aop.OperateLog;
+import com.foo.manage.common.base.BaseService;
 import com.foo.manage.common.utils.ServiceResult;
+import com.foo.manage.common.utils.UUIDUtils;
 import com.foo.manage.modules.sys.entity.User;
 import com.foo.manage.modules.sys.service.MenuService;
 
@@ -23,6 +33,9 @@ import com.foo.manage.modules.sys.service.MenuService;
  */
 @Controller
 public class IndexController {
+
+	@Autowired
+	private BaseService baseService;
 
 	@Autowired
 	private MenuService menuService;
@@ -82,5 +95,32 @@ public class IndexController {
 		Subject subject = SecurityUtils.getSubject();
 		subject.logout();
 		return "redirect:loginPage";
+	}
+
+	@RequestMapping("/testBatchInsert")
+	public void testBatchInsert() {
+		List<User> users = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			User user = new User();
+			user.setUserId(UUIDUtils.getUUID());
+			user.setUserName("test" + i);
+			users.add(user);
+		}
+		baseService.batchInsert(users.toArray());
+	}
+	
+	public static void main(String[] args) throws IOException {
+		URL url = new URL("http://localhost:8080/manage/user/list?page=1&rows=9999");
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.connect();
+		BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		StringBuilder result = new StringBuilder();
+		String line = "";
+		while ((line = br.readLine()) != null) {
+			result.append(line);
+		}
+		br.close();
+		connection.disconnect();
+		System.out.println(result.toString());
 	}
 }
