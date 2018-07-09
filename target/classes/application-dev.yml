@@ -1,8 +1,0 @@
-blog:
-  uploadPath: D:\neon_workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\upload\
-spring:
-  datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/manage
-    username: root
-    password: 123
