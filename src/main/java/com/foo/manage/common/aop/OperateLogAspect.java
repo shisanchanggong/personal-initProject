@@ -107,7 +107,7 @@ public class OperateLogAspect {
 				case "4":// 删除
 					if (args[0] instanceof Object[]) {// 批量删除
 						Object[] ids = (Object[]) args[0];
-						List<Map<String, Object>> list = new ArrayList<>();
+						List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 						for (Object id : ids) {
 							list.add(baseService.findNoTrans(operateClass.value(), id));
 						}
