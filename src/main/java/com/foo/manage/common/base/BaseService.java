@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.foo.manage.common.utils.CommonUtils;
-import com.foo.manage.common.utils.ExportUtils;
+import com.foo.manage.common.utils.ExcelUtils;
 import com.foo.manage.common.utils.LimitParams;
 import com.foo.manage.common.utils.PageRequest;
 import com.foo.manage.common.utils.ServiceResult;
@@ -30,7 +30,6 @@ import com.foo.manage.common.utils.UUIDUtils;
 
 /**
  * 基础服务类
- * 
  * @author quchangzhong
  * @time 2018年1月19日 下午7:54:24
  */
@@ -55,11 +54,17 @@ public abstract class BaseService {
 		return (T) CommonUtils.hashMapToObj(clazz, map);
 	}
 
+	/**
+	 * 通过id查询数据，返回Map类型数据
+	 * @param clazz 实体类
+	 * @param id ID值
+	 * @return Map类型数据
+	 */
 	public Map<String, Object> findNoTrans(Class<?> clazz, Object id) {
 		String table = getTable(clazz);
 		String idColumn = getIdColumn(clazz);
 		HashMap<String, Object> map = baseDao.find(table, getColumnsStr(clazz), idColumn, id);
-		Map<String, Object> transMap = new HashMap<>();
+		Map<String, Object> transMap = new HashMap<String, Object>();
 		for (Entry<String, Object> entry : map.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
@@ -84,6 +89,12 @@ public abstract class BaseService {
 		return (List<T>) CommonUtils.listMapToObj(clazz, list);
 	}
 
+	/**
+	 * 通过Map属性查询所有数据
+	 * @param clazz 实体类类型
+	 * @param map 过滤属性
+	 * @return 数据实体
+	 */
 	public <T> List<T> findBy(Class<?> clazz, Map<String, Object> map) {
 		String table = getTable(clazz);
 		List<com.foo.manage.common.base.Field> fields = CommonUtils.mapToField(map);
@@ -94,6 +105,13 @@ public abstract class BaseService {
 		return (List<T>) CommonUtils.listMapToObj(clazz, list);
 	}
 
+	/**
+	 * 通过Map属性查询数据（带分页）
+	 * @param clazz 实体类类型
+	 * @param pageReq 分页信息
+	 * @param map 过滤属性
+	 * @return 数据实体
+	 */
 	public <T> List<T> findBy(Class<?> clazz, PageRequest pageReq, Map<String, Object> map) {
 		String table = getTable(clazz);
 		List<com.foo.manage.common.base.Field> fields = CommonUtils.mapToField(map);
@@ -189,13 +207,15 @@ public abstract class BaseService {
 	 */
 	@Transactional
 	public List<Object> batchInsert(Object[] models) {
+		if (models.length == 0) {
+			return null;
+		}
 		Class<?> clazz = models[0].getClass();
 		String table = getTable(clazz);
-		List<Object> idValues = new ArrayList<>();
+		List<Object> idValues = new ArrayList<Object>();
 		Field[] fields = clazz.getDeclaredFields();
 		// 存储需要更新的字段，用逗号隔开
 		StringBuilder cloumns = new StringBuilder();
-		Object idValue = null;
 		// 记录数据库字段
 		for (Field field : fields) {
 			String fieldName = field.getName();
@@ -218,9 +238,11 @@ public abstract class BaseService {
 				field.setAccessible(true);
 				try {
 					fieldValue = field.get(model);
-					if (StringUtils.isEmpty(fieldValue) && field.getAnnotation(Id.class) != null) {
-						idValue = fieldValue = UUIDUtils.getUUID();
-						idValues.add(idValue);
+					if (field.getAnnotation(Id.class) != null) {
+						if (StringUtils.isEmpty(fieldValue)) {
+							fieldValue = UUIDUtils.getUUID();
+						}
+						idValues.add(fieldValue);
 					}
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
@@ -374,35 +396,6 @@ public abstract class BaseService {
 	}
 
 	/**
-	 * 获取HSSFWorkbook对象，使用URL方式调用Java接口，获取数据后按格式填充值
-	 * @param class1 
-	 * @param request
-	 * @throws IOException 
-	 */
-	public HSSFWorkbook getHSSFWorkbook(Map<String, Object> map) throws IOException{
-		String exportUrl = (String) map.get("exportUrl");
-		URL url = new URL(exportUrl);
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.connect();
-		BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		StringBuilder result = new StringBuilder();
-		String line = "";
-		while ((line = br.readLine()) != null) {
-			result.append(line);
-		}
-		// 释放资源
-		br.close();
-		connection.disconnect();
-		
-		Map<String, Object> pageResult = (Map<String, Object>) JSONUtils.parse(result.toString());
-		List<?> rows = (List<?>) pageResult.get("rows");// 需要导出的数据，需要转换
-		List<String> titleLabels = (List<String>) map.get("titleLabels");// 列名，对应jqgrid的colModel中的label属性
-		List<String> titleNames = (List<String>) map.get("titleNames");// 列名标识，对应jqgrid的colModel中的index属性
-		String sheetName = (String) map.get("sheetName");// sheet名称
-		return ExportUtils.getHSSFWorkbook(sheetName, titleLabels, titleNames, rows, null);
-	}
-
-	/**
 	 * 获取表名
 	 * @param clazz 类类型
 	 */
@@ -437,7 +430,7 @@ public abstract class BaseService {
 
 	/**
 	 * 新增或更新
-	 * @param classT 类类型
+	 * @param clazz 类类型
 	 * @param data 实体数据
 	 */
 	public ServiceResult insertOrUpdate(Class<?> clazz, Object data) {
@@ -449,7 +442,7 @@ public abstract class BaseService {
 				field.setAccessible(true);
 				try {
 					idValue = field.get(data);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				break;
@@ -470,7 +463,7 @@ public abstract class BaseService {
 		return serviceResult;
 	}
 
-	/*
+	/**
 	 * 获取表所有字段字符串
 	 */
 	private String getColumnsStr(Class<?> clazz) {
@@ -487,4 +480,31 @@ public abstract class BaseService {
 		return columnsSb.deleteCharAt(columnsSb.length() - 1).toString();
 	}
 
+	/**
+	 * 获取HSSFWorkbook对象，使用URL方式调用Java接口，获取数据后按格式填充值
+	 * @param map
+	 * @throws IOException
+	 */
+	public HSSFWorkbook getHSSFWorkbook(Map<String, Object> map) throws IOException {
+		String exportUrl = (String) map.get("exportUrl");
+		URL url = new URL(exportUrl);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.connect();
+		BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		StringBuilder result = new StringBuilder();
+		String line = "";
+		while ((line = br.readLine()) != null) {
+			result.append(line);
+		}
+		// 释放资源
+		br.close();
+		connection.disconnect();
+
+		Map<String, Object> pageResult = (Map<String, Object>) JSONUtils.parse(result.toString());
+		List<?> rows = (List<?>) pageResult.get("rows");// 需要导出的数据，需要转换
+		List<String> titleLabels = (List<String>) map.get("titleLabels");// 列名，对应jqgrid的colModel中的label属性
+		List<String> titleNames = (List<String>) map.get("titleNames");// 列名标识，对应jqgrid的colModel中的index属性
+		String sheetName = (String) map.get("sheetName");// sheet名称
+		return ExcelUtils.getHSSFWorkbook(sheetName, titleLabels, titleNames, rows, null);
+	}
 }

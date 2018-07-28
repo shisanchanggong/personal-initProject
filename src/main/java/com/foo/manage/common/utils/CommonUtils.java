@@ -16,7 +16,7 @@ public class CommonUtils {
 	/**
 	 * hashmap 转为 obj
 	 * @param clazz 类类型
-	 * @param map属性
+	 * @param map 属性
 	 * @return object属性
 	 */
 	public static Object hashMapToObj(Class<?> clazz, HashMap<String, Object> map) {
@@ -89,7 +89,7 @@ public class CommonUtils {
 	 * @return map集合
 	 */
 	public static Map<String, Object> objToMap(Object obj) {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		Class<?> clazz = obj.getClass();
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
@@ -116,7 +116,7 @@ public class CommonUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> objToMapUpper(Object obj) {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		if (obj instanceof Map) {
 			Map<String, Object> transMap = (Map<String, Object>) obj;
 			for (String key : transMap.keySet()) {

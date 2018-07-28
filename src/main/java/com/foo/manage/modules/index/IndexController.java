@@ -63,7 +63,7 @@ public class IndexController {
 
 	/**
 	 * 根据登录名和密码验证用户信息
-	 * @param userForm
+	 * @param user
 	 * @return
 	 */
 	@ResponseBody
@@ -99,7 +99,7 @@ public class IndexController {
 
 	@RequestMapping("/testBatchInsert")
 	public void testBatchInsert() {
-		List<User> users = new ArrayList<>();
+		List<User> users = new ArrayList<User>();
 		for (int i = 0; i < 10; i++) {
 			User user = new User();
 			user.setUserId(UUIDUtils.getUUID());

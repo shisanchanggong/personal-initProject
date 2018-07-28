@@ -31,11 +31,6 @@ $(function() {
 			rownumbers : true,
 			hidegrid : true,
 			multiselect : true,// 复选框
-//			jsonReader : {// pagehelper 所对应分页参数名称设置
-//				root : "list",
-//				records : "total",
-//				total : "pages"
-//			},
 			loadComplete : function(xhr) {
 				updateStyle();
 			}
@@ -197,7 +192,7 @@ function deleteItem(id,name,module){
 }
 
 /*
- * 导出方法
+ * 通用导出方法
  * dataTable jqgrid表格ID
  * module 模块名
  * sheetName 导出表格名
@@ -236,4 +231,35 @@ function exportRecord(dataTable, module, sheetName, fileName) {
 			fileName : fileName ? fileName : sheetName + ".xls"
 	};
 	window.location.href = _ctxRoot + "/"+ module +"/export?param=" + encodeURIComponent(JSON.stringify(data));
+}
+
+/*
+ * 导入方法，需要对应后台实现方法
+ * importIn 元素id
+ * module 模块名
+ */
+function importRecord(importIn, module) {
+	layui.use('upload', function(){
+        var upload = layui.upload;
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#' + importIn, //绑定元素
+            url: _ctxRoot + "/"+ module + "/importIn", //上传接口
+            size: 1000,
+            method: 'POST',
+            accept: 'file', //普通文件
+            done: function(res){
+            	//上传完毕回调
+            	layer.closeAll();
+                layer.msg(res.message);
+                $("#dataTable").trigger("reloadGrid");
+            },
+           	error: function(){
+                //请求异常回调
+            },
+            before: function() {
+            	layer.load();
+            }
+        });
+    });
 }

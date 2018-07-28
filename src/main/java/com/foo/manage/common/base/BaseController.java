@@ -111,7 +111,7 @@ public abstract class BaseController<T> {
 			HSSFWorkbook wb = baseService.getHSSFWorkbook(paramMap);
 			response.reset();
 			response.setContentType("application/octet-stream; charset=utf-8");
-            response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode((String) paramMap.get("fileName"), "UTF-8"));
+			response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode((String) paramMap.get("fileName"), "UTF-8"));
 			OutputStream os = response.getOutputStream();
 			wb.write(os);
 			os.close();

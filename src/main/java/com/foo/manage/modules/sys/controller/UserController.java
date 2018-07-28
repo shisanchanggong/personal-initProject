@@ -1,11 +1,15 @@
 package com.foo.manage.modules.sys.controller;
 
+import java.io.InputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.foo.manage.common.aop.OperateClass;
 import com.foo.manage.common.aop.OperateLog;
@@ -59,5 +63,13 @@ public class UserController extends BaseController<User> {
 	public ServiceResult validateLoginName(String loginName) {
 		logger.info("the called method : validateLoginName");
 		return userService.validateLoginName(loginName);
+	}
+
+	@RequestMapping("/importIn")
+	@ResponseBody
+	@OperateLog(operationType = Constants.OPERATE_TYPE_IMPORT, operationName = "导入用户Excel信息")
+	public ServiceResult importIn(@RequestParam("file") MultipartFile file) throws Exception {
+		InputStream inputStream = file.getInputStream();
+		return userService.improtExcel(inputStream);
 	}
 }

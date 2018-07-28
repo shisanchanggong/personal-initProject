@@ -84,7 +84,7 @@ public interface BaseDao {
 	/**
 	 * 查询所有记录
 	 * @param table
-	 * @param pageReq
+	 * @param columnsStr
 	 * @return
 	 */
 	List<HashMap<String, Object>> findAll(@Param("table") String table, @Param("columnsStr") String columnsStr);

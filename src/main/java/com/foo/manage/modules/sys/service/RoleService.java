@@ -33,7 +33,7 @@ public class RoleService extends BaseService {
 	@Transactional
 	public ServiceResult bindRole(String userId, String[] roles) {
 		this.deleteBy(UserRole.class, "userId", userId);
-		List<UserRole> userRoles = new ArrayList<>();
+		List<UserRole> userRoles = new ArrayList<UserRole>();
 		for (String roleId : roles) {
 			UserRole userRole = new UserRole();
 			userRole.setUserRoleId(UUIDUtils.getUUID());

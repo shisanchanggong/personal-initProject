@@ -4,7 +4,7 @@
 <head>
     <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
     <jsp:include page="/WEB-INF/views/include/base-include.jsp">
-        <jsp:param name="include" value="base,layer,jqgrid,select2,app"/>
+        <jsp:param name="include" value="base,layer,layui,jqgrid,select2,app"/>
     </jsp:include>
 
     <title>用户管理</title>
@@ -45,7 +45,7 @@
         //初始化加载调整宽度和注册宽度时间
         resizeWindow();
 
-        $("#select").select2();
+        importRecord("importIn", module);
 
         // 搜索
         $("#searchForm").submit(function (e) {
@@ -109,9 +109,13 @@
         batchDelete(module);
     }
 
+    /*
+     * 导出Excel
+     */
     function exportExecl() {
         exportRecord("dataTable", module, "用户列表");
     }
+
     /*********************************crud end**********************************/
 </script>
 <body>
@@ -133,6 +137,9 @@
         </a>
         <a class='btn btn-primary' onClick="exportExecl()">
             <span class="glyphicon glyphicon-export"></span>&nbsp;导出
+        </a>
+        <a id="importIn" class='btn btn-warning'>
+            <span class="glyphicon glyphicon-import"></span>&nbsp;导入
         </a>
     </form>
     <div class="col-xs-12">

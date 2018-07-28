@@ -83,7 +83,11 @@ var _rowNum=20;
 		<c:when test="${'layer' eq item}">
 			<link href="${ctxStatic}/plugin/layer/layer-v3.1.0/theme/default/layer.css" type="text/css" rel="stylesheet" />
 			<script src="${ctxStatic}/plugin/layer/layer-v3.1.0/layer.js" type="text/javascript"></script>
-		</c:when>		
+		</c:when>
+		<c:when test="${'layui' eq item}">
+			<link href="${ctxStatic}/plugin/layui/css/layui.css" type="text/css" rel="stylesheet" />
+			<script src="${ctxStatic}/plugin/layui/layui.js" type="text/javascript"></script>
+		</c:when>
 		<c:when test="${'app' eq item}">
 			<link type="text/css" rel="stylesheet" href="${ctxStatic}/common/css/app.css" />
 			<script src="${ctxStatic}/common/js/app.js" type="text/javascript"></script>

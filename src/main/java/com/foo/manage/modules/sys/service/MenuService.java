@@ -93,7 +93,7 @@ public class MenuService extends BaseService {
 	@Transactional
 	public ServiceResult bindMenu(String roleId, String[] menuIds) {
 		this.deleteBy(RoleMenu.class, "roleId", roleId);
-		List<RoleMenu> roleMenus = new ArrayList<>();
+		List<RoleMenu> roleMenus = new ArrayList<RoleMenu>();
 		for (String menuId : menuIds) {
 			RoleMenu roleMenu = new RoleMenu();
 			roleMenu.setRoleMenuId(UUIDUtils.getUUID());

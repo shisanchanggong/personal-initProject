@@ -61,7 +61,7 @@
 	/*********************************formatter start**********************************/
 	function operatorFormatter(cellValue, options, rowObject){
 		var operateType = rowObject.operateType;
-		if (operateType == "-1" || operateType == "0" || operateType == "1") {
+		if (operateType == "-1" || operateType == "0" || operateType == "1" || operateType == "6") {
 			return "";
 		}
 		var id = rowObject.logId;
