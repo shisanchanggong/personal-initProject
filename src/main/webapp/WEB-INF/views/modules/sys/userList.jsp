@@ -113,7 +113,14 @@
      * 导出Excel
      */
     function exportExecl() {
-        exportRecord("dataTable", module, "用户列表");
+        exportRecord("dataTable", module, "用户列表", _ctxRoot + "/user/exportData");
+    }
+
+    /*
+     * 下载模板
+     */
+    function downloadTemplate() {
+    	window.location.href= _ctxStatic + "/template/用户信息模板.xls";
     }
 
     /*********************************crud end**********************************/
@@ -140,6 +147,9 @@
         </a>
         <a id="importIn" class='btn btn-warning'>
             <span class="glyphicon glyphicon-import"></span>&nbsp;导入
+        </a>
+        <a id="downloadTemplate" class='btn btn-warning' onClick="downloadTemplate()">
+            <span class="glyphicon glyphicon-import"></span>&nbsp;下载模板
         </a>
     </form>
     <div class="col-xs-12">
