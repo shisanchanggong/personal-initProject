@@ -1,6 +1,10 @@
 package com.foo.manage.modules.sys.controller;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +15,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.foo.manage.common.aop.OperateClass;
 import com.foo.manage.common.aop.OperateLog;
 import com.foo.manage.common.base.BaseController;
 import com.foo.manage.common.utils.Constants;
+import com.foo.manage.common.utils.PageRequest;
+import com.foo.manage.common.utils.PageResult;
+import com.foo.manage.common.utils.PageResultHelper;
 import com.foo.manage.common.utils.ServiceResult;
+import com.foo.manage.common.utils.StringUtils;
 import com.foo.manage.modules.sys.entity.User;
 import com.foo.manage.modules.sys.service.UserService;
 
@@ -27,6 +36,7 @@ import com.foo.manage.modules.sys.service.UserService;
 @OperateClass(User.class)
 @Controller
 @RequestMapping("/user")
+@SuppressWarnings("unchecked")
 public class UserController extends BaseController<User> {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -54,7 +64,7 @@ public class UserController extends BaseController<User> {
 		logger.info("the called method : save");
 		return userService.save(data);
 	}
-	
+
 	/**
 	 * 验证用户名唯一性
 	 */
@@ -65,6 +75,10 @@ public class UserController extends BaseController<User> {
 		return userService.validateLoginName(loginName);
 	}
 
+	/**
+	 * 导入用户Excel信息
+	 * @param file 文件信息
+	 */
 	@RequestMapping("/importIn")
 	@ResponseBody
 	@OperateLog(operationType = Constants.OPERATE_TYPE_IMPORT, operationName = "导入用户Excel信息")
@@ -72,4 +86,19 @@ public class UserController extends BaseController<User> {
 		InputStream inputStream = file.getInputStream();
 		return userService.improtExcel(inputStream);
 	}
+
+	/**
+	 * 用户导出
+	 * @param request 请求参数
+	 * @return 分页信息（为了共用导出方法）
+	 */
+	@RequestMapping("/exportData")
+	@ResponseBody
+	public PageResult exportUserData(HttpServletRequest request, PageRequest pageReq) {
+		String param = (String) request.getParameter("param");
+		Map<String, Object> paramMap = StringUtils.isEmpty(param) ? new HashMap<String, Object>(2) : (Map<String, Object>) JSONUtils.parse(param);
+		PageResultHelper.startPage(pageReq);
+		return PageResultHelper.parseResult(userService.exportUserData(paramMap));
+	}
+
 }

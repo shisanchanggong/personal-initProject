@@ -16,6 +16,10 @@ public class PageResult {
 	public PageResult() {
 
 	}
+	
+	public PageResult(List<?> rows) {
+		this.rows = rows;
+	}
 
 	public PageResult(Long records, Integer page, int total, List<?> rows) {
 		this.records = records;

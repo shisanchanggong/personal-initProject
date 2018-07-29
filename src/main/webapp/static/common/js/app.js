@@ -196,9 +196,10 @@ function deleteItem(id,name,module){
  * dataTable jqgrid表格ID
  * module 模块名
  * sheetName 导出表格名
+ * exportUrl 导出接口路径 （可选，默认为jqgrid请求路径）
  * fileName Excel文件名 （可选，默认为 表格名.xls）
  */
-function exportRecord(dataTable, module, sheetName, fileName) {
+function exportRecord(dataTable, module, sheetName, exportUrl, fileName) {
 	var tableObj = $("#dataTable");
 	var colModel = tableObj.jqGrid("getGridParam","colModel");
 	var titleLabels = [];
@@ -211,7 +212,7 @@ function exportRecord(dataTable, module, sheetName, fileName) {
 		titleLabels.push(item.label);
 		titleNames.push(item.index);
 	}
-	var exportUrl = httpHeader + tableObj.getGridParam("url");
+	exportUrl = httpHeader + (exportUrl ? exportUrl : tableObj.getGridParam("url"));
 	if (exportUrl.indexOf("?") != -1) {
 		exportUrl += "&";
 	} else {
@@ -220,9 +221,12 @@ function exportRecord(dataTable, module, sheetName, fileName) {
 	exportUrl += "page=1&rows=9999&";
 	var postData = tableObj.getGridParam("postData");
 	for ( var key in postData) {
-		exportUrl += (key + "=" + encodeURIComponent(postData[key]) + "&");
+		if (key != "page" && key != "rows") {
+			exportUrl += (key + "=" + encodeURIComponent(postData[key]) + "&");
+		}
 	}
 	exportUrl = exportUrl.substring(0, exportUrl.length - 1);
+	console.log(exportUrl);
 	var data = {
 			titleLabels : titleLabels,
 			titleNames : titleNames,

@@ -31,7 +31,7 @@ public class User implements Serializable {
 	
 	private String departmentName;
 	
-	private Integer locked;
+	private String locked;
 	
 	private String remark;
 	
@@ -103,11 +103,11 @@ public class User implements Serializable {
 		this.departmentName = departmentName;
 	}
 
-	public Integer getLocked() {
+	public String getLocked() {
 		return locked;
 	}
 
-	public void setLocked(Integer locked) {
+	public void setLocked(String locked) {
 		this.locked = locked;
 	}
 

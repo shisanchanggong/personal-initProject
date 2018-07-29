@@ -31,4 +31,19 @@
 			login_name = #{loginName}
 		AND login_password = #{loginPassword}
 	</select>
+	
+	<select id="exportUserData" resultType="com.foo.manage.modules.sys.entity.User">
+		SELECT
+			USER_NAME,
+			LOGIN_NAME,
+			CASE USER_SEX WHEN 'M' THEN '男' WHEN 'F' THEN '女' END USER_SEX,
+			DEPARTMENT_NAME,
+			CASE LOCKED WHEN '1' THEN '正常' WHEN '0' THEN '锁定' END LOCKED
+		FROM
+			sys_user
+		WHERE 1=1
+		<if test="userName != null and userName != ''">
+			AND USER_NAME LIKE CONCAT('%',#{userName},'%')
+		</if>
+	</select>
 </mapper>

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -12,6 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.foo.manage.common.base.BaseService;
@@ -20,6 +22,7 @@ import com.foo.manage.common.utils.StringUtils;
 import com.foo.manage.common.utils.SubjectUtils;
 import com.foo.manage.common.utils.TimeUtils;
 import com.foo.manage.common.utils.UUIDUtils;
+import com.foo.manage.modules.sys.dao.UserMapper;
 import com.foo.manage.modules.sys.entity.CurrentUser;
 import com.foo.manage.modules.sys.entity.User;
 
@@ -31,6 +34,13 @@ import com.foo.manage.modules.sys.entity.User;
 @Service
 public class UserService extends BaseService {
 
+	@Autowired
+	private UserMapper userMapper;
+	
+	/**
+	 * 保存（新增或更新）
+	 * @param user 用户信息
+	 */
 	public ServiceResult save(User user) {
 		if (StringUtils.isEmpty(user.getLoginPassword())) {
 			String loginPassword = SubjectUtils.md5Encrypt(user.getUserName(), "111111");
@@ -102,8 +112,9 @@ public class UserService extends BaseService {
 					user.setUserName(StringUtils.isEmpty(userNameCell) ? "" : String.valueOf(userNameCell));
 					user.setLoginName(loginName);
 					user.setLoginPassword(StringUtils.isEmpty(LoginPasswordCell) ? "" : SubjectUtils.md5Encrypt(user.getUserName(), String.valueOf(LoginPasswordCell)));
-					user.setUserSex(StringUtils.isEmpty(userSexCell) ? "" : String.valueOf(userSexCell));
+					user.setUserSex(StringUtils.isEmpty(userSexCell) ? "" : ("男".equals(String.valueOf(userSexCell)) ? "M" : "F"));
 					user.setRemark(StringUtils.isEmpty(remarkSex) ? "" : String.valueOf(remarkSex));
+					user.setLocked("1");
 					user.setCreateTime(TimeUtils.getTimestamp());
 					CurrentUser currentUser = SubjectUtils.getUser();
 					user.setCreateUserId(currentUser.getUserId());
@@ -120,6 +131,13 @@ public class UserService extends BaseService {
 					"共发现 " + excelSumRecord + " 条数据，成功导入 " + insertSize + " 条！" + (errorLoginNameCount == 0 ? "" : "登录名已存在的记录：" + errorLoginName + "共 " + errorLoginNameCount + " 条！"), batchInsert);
 		}
 		return ServiceResult.newErrorInstance("导入失败，请检查Excel模板是否最新或是否有误！");
+	}
+
+	/**
+	 * 用户导出
+	 */
+	public List<User> exportUserData(Map<String, Object> paramMap) {
+		return userMapper.exportUserData(paramMap);
 	}
 
 }
