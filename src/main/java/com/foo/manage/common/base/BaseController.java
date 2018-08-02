@@ -33,17 +33,28 @@ import com.foo.manage.common.utils.StringUtils;
 @SuppressWarnings("unchecked")
 public abstract class BaseController<T> {
 
+	/**
+	 * 子类Class类型
+	 */
 	public Class<T> classT;
 
 	@Autowired
 	private BaseService baseService;
 
+	/**
+	 * 根据ID查询单条记录
+	 * @param id 数据ID
+	 */
 	@RequestMapping("/data/{id}")
 	@ResponseBody
 	public T data(@PathVariable("id") String id) {
 		return baseService.find(classT, id);
 	}
 
+	/**
+	 * 单条记录删除
+	 * @param id 数据ID
+	 */
 	@RequestMapping("/delete/{id}")
 	@ResponseBody
 	@OperateLog(operationType = Constants.OPERATE_TYPE_DELETE, operationName = "单条删除")
@@ -51,6 +62,10 @@ public abstract class BaseController<T> {
 		return baseService.delete(classT, id);
 	}
 
+	/**
+	 * 批量删除
+	 * @param ids id数组
+	 */
 	@RequestMapping("/batchDelete")
 	@ResponseBody
 	@OperateLog(operationType = Constants.OPERATE_TYPE_DELETE, operationName = "批量删除")
@@ -58,6 +73,10 @@ public abstract class BaseController<T> {
 		return baseService.batchDelete(classT, ids);
 	}
 
+	/**
+	 * 新增或修改操作
+	 * @param data 需要保存的数据
+	 */
 	@RequestMapping("/save")
 	@ResponseBody
 	@OperateLog(operationType = Constants.OPERATE_TYPE_SAVE, operationName = "保存（新增或更新）")
@@ -67,8 +86,8 @@ public abstract class BaseController<T> {
 
 	/**
 	 * 精确搜索
-	 * @param request
-	 * @param pageReq
+	 * @param request 请求参数
+	 * @param pageReq 分页信息实体
 	 * @return
 	 */
 	@RequestMapping("/list")
@@ -85,8 +104,8 @@ public abstract class BaseController<T> {
 
 	/**
 	 * 模糊搜索
-	 * @param request
-	 * @param pageReq
+	 * @param request 请求参数
+	 * @param pageReq 分页信息实体
 	 * @return
 	 */
 	@RequestMapping(value = "/list", params = { "like" })
@@ -101,6 +120,11 @@ public abstract class BaseController<T> {
 		return new PageResultHelper().exeQuery(classT, pageReq, paramMap);
 	}
 
+	/**
+	 * 通用导出方法
+	 * @param request 请求信息
+	 * @param response 响应信息
+	 */
 	@RequestMapping("/export")
 	@ResponseBody
 	public void export(HttpServletRequest request, HttpServletResponse response) {
@@ -120,26 +144,29 @@ public abstract class BaseController<T> {
 		}
 	}
 
+	/**
+	 * 构造方法，同时为继承的类赋Class值
+	 */
 	public BaseController() {
 		Type genType = getClass().getGenericSuperclass();
 		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
 		classT = (Class<T>) params[0];
 	}
 
-	// 发送响应流方法
+	/**
+	 * 发送响应流方法
+	 * @param response 响应信息
+	 * @param fileName 文件名
+	 */
 	public void setResponseHeader(HttpServletResponse response, String fileName) {
 		try {
-			try {
-				fileName = new String(fileName.getBytes(), "ISO8859-1");
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-			response.setContentType("application/octet-stream;charset=ISO8859-1");
-			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-			response.addHeader("Pargam", "no-cache");
-			response.addHeader("Cache-Control", "no-cache");
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			fileName = new String(fileName.getBytes(), "ISO8859-1");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
+		response.setContentType("application/octet-stream;charset=ISO8859-1");
+		response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+		response.addHeader("Pargam", "no-cache");
+		response.addHeader("Cache-Control", "no-cache");
 	}
 }

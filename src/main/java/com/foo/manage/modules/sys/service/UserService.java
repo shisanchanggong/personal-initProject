@@ -103,7 +103,7 @@ public class UserService extends BaseService {
 					sb.append(loginName);
 					sb.append("】");
 				} else {// 登录名不存在的插入数据
-					Cell LoginPasswordCell = row.getCell(2);
+					Cell loginPasswordCell = row.getCell(2);
 					Cell userSexCell = row.getCell(3);
 					Cell remarkSex = row.getCell(4);
 					// 赋值
@@ -111,7 +111,7 @@ public class UserService extends BaseService {
 					user.setUserId(UUIDUtils.getUUID());
 					user.setUserName(StringUtils.isEmpty(userNameCell) ? "" : String.valueOf(userNameCell));
 					user.setLoginName(loginName);
-					user.setLoginPassword(StringUtils.isEmpty(LoginPasswordCell) ? "" : SubjectUtils.md5Encrypt(user.getUserName(), String.valueOf(LoginPasswordCell)));
+					user.setLoginPassword(StringUtils.isEmpty(loginPasswordCell) ? "" : SubjectUtils.md5Encrypt(user.getUserName(), String.valueOf(loginPasswordCell)));
 					user.setUserSex(StringUtils.isEmpty(userSexCell) ? "" : ("男".equals(String.valueOf(userSexCell)) ? "M" : "F"));
 					user.setRemark(StringUtils.isEmpty(remarkSex) ? "" : String.valueOf(remarkSex));
 					user.setLocked("1");
