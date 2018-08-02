@@ -53,7 +53,7 @@ public class ExcelUtils {
 		HSSFCellStyle style = wb.createCellStyle();
 		style.setAlignment(HorizontalAlignment.CENTER.getCode()); // 创建一个居中格式
 		style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		style.setFont(font);
 
 		// 声明列对象

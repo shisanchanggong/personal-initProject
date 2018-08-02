@@ -1,10 +1,6 @@
 package com.foo.manage.modules.index;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,19 +104,17 @@ public class IndexController {
 		}
 		baseService.batchInsert(users.toArray());
 	}
-	
+
 	public static void main(String[] args) throws IOException {
-		URL url = new URL("http://localhost:8080/manage/user/list?page=1&rows=9999");
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.connect();
-		BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		StringBuilder result = new StringBuilder();
-		String line = "";
-		while ((line = br.readLine()) != null) {
-			result.append(line);
-		}
-		br.close();
-		connection.disconnect();
-		System.out.println(result.toString());
+		/*
+		 * URL url = new
+		 * URL("http://localhost:8080/manage/user/list?page=1&rows=9999");
+		 * HttpURLConnection connection = (HttpURLConnection)
+		 * url.openConnection(); connection.connect(); BufferedReader br = new
+		 * BufferedReader(new InputStreamReader(connection.getInputStream()));
+		 * StringBuilder result = new StringBuilder(); String line = ""; while
+		 * ((line = br.readLine()) != null) { result.append(line); } br.close();
+		 * connection.disconnect(); System.out.println(result.toString());
+		 */
 	}
 }

@@ -13,13 +13,23 @@ import com.foo.manage.modules.sys.entity.CurrentUser;
  */
 public class SubjectUtils {
 
+	public static RedisUtils getRedisUtils() {
+		return (RedisUtils) SpringContextUtil.getBean(RedisUtils.class);
+	}
+
 	public static CurrentUser getUser() {
-		Object principal = SecurityUtils.getSubject().getPrincipal();
-		return principal == null ? new CurrentUser() : (CurrentUser) principal;
+		RedisUtils redisUtils = getRedisUtils();
+		Object currentUser = redisUtils.get("currentUser");
+		if (currentUser == null) {
+			currentUser = SecurityUtils.getSubject().getPrincipal();
+			redisUtils.set("currentUser", currentUser);
+		}
+		return currentUser == null ? new CurrentUser() : (CurrentUser) currentUser;
 	}
 
 	public static void setUser(Object user) {
 		SecurityUtils.getSubject().getSession().setAttribute("currentUser", user);
+		getRedisUtils().set("currentUser", user);
 	}
 
 	public static String getUserId() {
