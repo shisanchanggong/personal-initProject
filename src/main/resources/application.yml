@@ -36,10 +36,6 @@ spring:
     filters: stat,wall,log4j
     # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
   mvc:
     view:
       prefix: /WEB-INF/views/
@@ -47,8 +43,3 @@ spring:
 server:
   context-path: /manage
   port: 8080
-
-#日志等级
-logging:
-  pattern:
-    level: DEBUG

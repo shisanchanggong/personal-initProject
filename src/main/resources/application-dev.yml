@@ -6,3 +6,6 @@ spring:
     url: jdbc:mysql://localhost:3306/manage
     username: root
     password: 123
+  redis:
+    host: 127.0.0.1
+    port: 6379

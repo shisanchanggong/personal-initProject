@@ -3,53 +3,54 @@ package com.foo.manage;
 import java.util.LinkedHashMap;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
-import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 
+import com.foo.manage.common.redis.ShiroRedisCacheManager;
 import com.foo.manage.modules.sys.realm.UserRealm;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Configuration
 public class ShiroConfig {
 	@Bean
-	public EhCacheManager getEhCacheManager() {
-		EhCacheManager em = new EhCacheManager();
-		em.setCacheManagerConfigFile("classpath:ehcache.xml");
-		return em;
+	public ShiroRedisCacheManager shiroRedisCacheManager(RedisTemplate redisTemplate) {
+		ShiroRedisCacheManager redisCacheManager = new ShiroRedisCacheManager(redisTemplate);
+		// name是key的前缀，可以设置任何值，无影响，可以设置带项目特色的值
+		redisCacheManager.createCache("shiro_redis");
+		return redisCacheManager;
 	}
 
 	@Bean
-	UserRealm userRealm(EhCacheManager cacheManager) {
+	public UserRealm userRealm(RedisTemplate redisTemplate) {
 		UserRealm userRealm = new UserRealm();
+		// 设置缓存管理器
+		userRealm.setCacheManager(shiroRedisCacheManager(redisTemplate));
+		
 		// 加密设置
 		HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher();
 		credentialsMatcher.setHashAlgorithmName("MD5");
 		credentialsMatcher.setHashIterations(1024);
+		// 设置认证密码算法及迭代复杂度
 		userRealm.setCredentialsMatcher(credentialsMatcher);
-		userRealm.setCacheManager(cacheManager);
+		userRealm.setCachingEnabled(true);
+		// 认证
+		userRealm.setAuthenticationCachingEnabled(false);
+		// 授权
+		userRealm.setAuthorizationCachingEnabled(false);
 		return userRealm;
 	}
 
 	@Bean
-	SessionDAO sessionDAO() {
-		MemorySessionDAO sessionDAO = new MemorySessionDAO();
-		return sessionDAO;
-	}
-
-	@Bean
-	SecurityManager securityManager(UserRealm userRealm) {
+	SecurityManager securityManager(RedisTemplate redisTemplate) {
 		DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
-		manager.setRealm(userRealm);
-		manager.setCacheManager(getEhCacheManager());
+		manager.setRealm(userRealm(redisTemplate));
+		manager.setCacheManager(shiroRedisCacheManager(redisTemplate));
 		return manager;
 	}
 
@@ -63,6 +64,7 @@ public class ShiroConfig {
 		LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 		filterChainDefinitionMap.put("/login", "anon");
 		filterChainDefinitionMap.put("/exit", "anon");
+		filterChainDefinitionMap.put("/favicon.ico", "anon");
 		filterChainDefinitionMap.put("/static/**", "anon");
 		filterChainDefinitionMap.put("/**/list", "anon");
 		filterChainDefinitionMap.put("/**/exportData", "anon");
@@ -70,18 +72,6 @@ public class ShiroConfig {
 
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 		return shiroFilterFactoryBean;
-	}
-
-	@Bean("lifecycleBeanPostProcessor")
-	public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-		return new LifecycleBeanPostProcessor();
-	}
-
-	@Bean
-	public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-		DefaultAdvisorAutoProxyCreator proxyCreator = new DefaultAdvisorAutoProxyCreator();
-		proxyCreator.setProxyTargetClass(true);
-		return proxyCreator;
 	}
 
 	@Bean

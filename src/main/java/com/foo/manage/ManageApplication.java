@@ -15,13 +15,13 @@ import com.foo.manage.common.filter.XSSFilter;
 import com.foo.manage.common.utils.SpringContextUtil;
 import com.github.pagehelper.PageHelper;
 
-@MapperScan(basePackages="com.foo.manage")
+@MapperScan(basePackages = "com.foo.manage")
 @SpringBootApplication
 public class ManageApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		ApplicationContext app = SpringApplication.run(ManageApplication.class, args);
-        SpringContextUtil.setApplicationContext(app); 
+		SpringContextUtil.setApplicationContext(app);
 	}
 
 	@Override
@@ -54,20 +54,4 @@ public class ManageApplication extends SpringBootServletInitializer {
 		return registration;
 	}
 
-	// @Bean(name = "shiroLoginFilter")
-	// public ShiroLoginFilter shiroLoginFilter(){
-	// ShiroLoginFilter shiroLoginFilter = new ShiroLoginFilter();
-	// return shiroLoginFilter;
-	// }
-	//
-	// // 配置shiroFilter
-	// @Bean
-	// public ShiroFilterFactoryBean shiroFilterFactoryBean(){
-	// ShiroFilterFactoryBean shiroFilterFactoryBean = new
-	// ShiroFilterFactoryBean();
-	// Map<String, Filter> filters = new HashMap<>();
-	// filters.put("shiroLoginFilter", new ShiroLoginFilter());
-	// shiroFilterFactoryBean.setFilters(filters);
-	// return shiroFilterFactoryBean;
-	// }
 }

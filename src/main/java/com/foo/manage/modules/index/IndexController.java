@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.foo.manage.common.aop.OperateLog;
 import com.foo.manage.common.base.BaseService;
 import com.foo.manage.common.utils.ServiceResult;
+import com.foo.manage.common.utils.SubjectUtils;
 import com.foo.manage.common.utils.UUIDUtils;
 import com.foo.manage.modules.sys.entity.User;
 import com.foo.manage.modules.sys.service.MenuService;
@@ -116,5 +117,6 @@ public class IndexController {
 		 * ((line = br.readLine()) != null) { result.append(line); } br.close();
 		 * connection.disconnect(); System.out.println(result.toString());
 		 */
+		System.out.println(SubjectUtils.getUser());
 	}
 }

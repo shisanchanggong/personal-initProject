@@ -4,6 +4,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 
+import com.foo.manage.common.redis.RedisCache;
 import com.foo.manage.modules.sys.entity.CurrentUser;
 
 /**
@@ -13,23 +14,24 @@ import com.foo.manage.modules.sys.entity.CurrentUser;
  */
 public class SubjectUtils {
 
-	public static RedisUtils getRedisUtils() {
-		return (RedisUtils) SpringContextUtil.getBean(RedisUtils.class);
+	@SuppressWarnings("unchecked")
+	public static RedisCache<String, Object> getRedisCache() {
+		return (RedisCache<String, Object>) SpringContextUtil.getBean(RedisCache.class);
 	}
 
 	public static CurrentUser getUser() {
-		RedisUtils redisUtils = getRedisUtils();
-		Object currentUser = redisUtils.get("currentUser");
+		RedisCache<String, Object> redisCache = getRedisCache();
+		Object currentUser = redisCache.get("currentUser");
 		if (currentUser == null) {
 			currentUser = SecurityUtils.getSubject().getPrincipal();
-			redisUtils.set("currentUser", currentUser);
+			redisCache.put("currentUser", currentUser);
 		}
 		return currentUser == null ? new CurrentUser() : (CurrentUser) currentUser;
 	}
 
 	public static void setUser(Object user) {
 		SecurityUtils.getSubject().getSession().setAttribute("currentUser", user);
-		getRedisUtils().set("currentUser", user);
+		getRedisCache().put("currentUser", user);
 	}
 
 	public static String getUserId() {

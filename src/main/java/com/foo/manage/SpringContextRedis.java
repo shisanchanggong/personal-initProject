@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.foo.manage.common.utils.RedisUtils;
+import com.foo.manage.common.redis.RedisCache;
 
 /**
  * redis 缓存配置
@@ -46,9 +46,7 @@ public class SpringContextRedis {
 	}
 
 	@Bean
-	public RedisUtils redisUtils(RedisTemplate<String, Object> redisTemplate) {
-		RedisUtils redisUtils = new RedisUtils();
-		redisUtils.setRedisTemplate(redisTemplate);
-		return redisUtils;
+	public RedisCache<String, Object> redisCache(RedisTemplate<String, Object> redisTemplate) {
+		return new RedisCache<String, Object>(redisTemplate);
 	}
 }
