@@ -35,7 +35,7 @@
 	<!-- 日志显示级别设置 -->
 	<!-- show parameters for hibernate sql 专为 Hibernate 定制 -->
 	<logger name="org.hibernate" level="WARN" />
-
+	
 	<!--myibatis log configure -->
 	<logger name="com.apache.ibatis" level="TRACE" />
 	<logger name="java.sql.Connection" level="DEBUG" />

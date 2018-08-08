@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.foo.manage.modules.sys.dao.SysOperateLogMapper">
+	<select id="sysOperateLogList" resultType="com.foo.manage.modules.sys.entity.SysOperateLog">
+		SELECT
+			LOG_ID,
+			OPERATE_TYPE,
+			OPERATE_NAME,
+			OPERATE_USER_ID,
+			OPERATE_USER_NAME,
+			OPERATE_TIME,
+			UPDATE_PARAMS,
+			REQUEST_URL,
+			TABLE_NAME
+		FROM
+			sys_operate_log
+		WHERE 1=1
+		<if test="operateType != null and operateType != ''">
+			AND OPERATE_TYPE = #{operateType}
+		</if>
+		<if test="operateName != null and operateName != ''">
+			AND OPERATE_NAME LIKE CONCAT('%', #{operateName}, '%')
+		</if>
+	</select>
+</mapper>

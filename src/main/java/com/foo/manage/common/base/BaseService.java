@@ -55,7 +55,7 @@ public abstract class BaseService {
 	}
 
 	/**
-	 * 通过id查询数据，返回Map类型数据
+	 * 通过id查询数据，返回Map类型数据（key为驼峰命名形式）
 	 * @param clazz 实体类
 	 * @param id ID值
 	 * @return Map类型数据

@@ -15,7 +15,7 @@
 	$(document).ready(function() {
 		tableObj = $("#dataTable").jqGrid({
 			caption : "操作日志列表",
-			url : _ctxRoot + "/sysOperateLog/list?like",
+			url : _ctxRoot + "/sysOperateLog/sysOperateLogList",
 			sortname : "OPERATE_TIME",
 			sortorder :"DESC",
 			multiselect : false,
@@ -26,6 +26,7 @@
 				{label : "操作日志名称", name : "operateName", index : "OPERATE_NAME", align : 'center'}, 
 				{label : "操作路径", name : "requestUrl", index : "REQUEST_URL", align : 'center'},
 				{label : "操作表", name : "tableName", index : "TABLE_NAME", align : 'center'},
+				{label : "操作类型", name : "operateType", index : "OPERATE_TYPE", align : 'center', formatter: operateTypeFormatter},
 				{label : "updateParams", name : "updateParams", hidden : true}, 
 				{label : "操作", name : "operator", align : 'center', sortable : false, formatter: operatorFormatter}
 			],
@@ -44,7 +45,8 @@
 
 	function getParams() {
 		var param = {
-				operateName : $("#operateName").val()
+				operateName : $("#operateName").val(),
+				operateType : $("#operateType").val()
 		};
 		return {'param':JSON.stringify(param)};
 	}
@@ -68,8 +70,40 @@
 		var lookBtn = "<button class='btn btn-success btn-xs' title='查看详情' onclick=\"openCurForm('"+id+"')\"><i class='fa fa-eye'></i>&nbsp;查看详情</button>";
 		return lookBtn;
 	}
+	
 	function timeFormatter(cellValue, options, rowObject){
 		return new Date(cellValue).Format("yyyy-MM-dd hh:mm:ss");
+	}
+
+	function operateTypeFormatter(cellValue, options, rowObject){
+		var operateType = "";
+		switch (cellValue) {
+		case "-1":
+			operateType = "退出系统";
+			break;
+		case "0":
+			operateType = "进入系统";
+			break;
+		case "1":
+			operateType = "查询";
+			break;
+		case "2":
+			operateType = "新增";
+			break;
+		case "3":
+			operateType = "更新";
+			break;
+		case "4":
+			operateType = "删除";
+			break;
+		case "5":
+			operateType = "保存（新增或更新）";
+			break;
+		case "6":
+			operateType = "导入";
+			break;
+		}
+		return operateType;
 	}
 	/*********************************formatter end**********************************/
 	function openCurForm(logId){
@@ -110,6 +144,18 @@
 			<div class="form-group">
 				<label class="control-label">操作日志名称：</label> 
 				<input class="form-control" name="operateName" id="operateName"> 
+				<label class="control-label">操作类型：</label> 
+				<select class="form-control" name="operateType" id="operateType">
+					<option value="">全部</option>
+					<option value="-1">退出系统</option>
+					<option value="0">进入系统</option>
+					<option value="1">查询</option>
+					<option value="2">新增</option>
+					<option value="3">更新</option>
+					<option value="4">删除</option>
+					<option value="5">保存（新增或更新）</option>
+					<option value="6">导入</option>
+				</select>
 			</div>
 
 			<button id="search" type="submit" class="btn btn-info">

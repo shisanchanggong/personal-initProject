@@ -68,7 +68,12 @@ public class OperateLogAspect {
 	}
 
 	/**
-	 * 环绕触发
+	 * 环绕触发 插入日志时可以使查询、新增、修改、删除、保存（包括新增或删除，至于是哪一种自行判断）操作
+	 * 新增、修改、保存操作会将调用方法的参数直接保存到数据库 删除会先用id值查询出删除的数据，然后保存到实体中，然后插入数据库
+	 * 
+	 * 如果整个类都不需要记录日志，则在类上加上@NoRecordLog注解即可
+	 * 如果方法上需要记录日志，则需要标记插入的类型（查询、新增、修改等）、操作标题（自行填写标题），注解使用@OperateLog
+	 * 如果需要记录表名，则需要在类上加入操作类注解@OperateClass，不加则不记录
 	 */
 	@Around("webLog()")
 	public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -84,49 +89,59 @@ public class OperateLogAspect {
 				OperateClass operateClass = targetClass.getAnnotation(OperateClass.class);
 				request = getHttpServletRequest();
 				// 插入操作痕迹到数据库
-				SysOperateLog log = new SysOperateLog();
-				log.setLogId(UUIDUtils.getUUID());
-				CurrentUser currentUser = SubjectUtils.getUser();
-				log.setOperateUserId(currentUser.getUserId());
-				log.setOperateUserName(currentUser.getUserName());
-				log.setOperateTime(TimeUtils.getTimestamp());
-				String operationType = operateLog.operationType();
-				log.setOperateType(operationType);
-				log.setOperateName(operateLog.operationName());
-				log.setRequestUrl(request.getServletPath());
-				Object params = null;
-				Object[] args = joinPoint.getArgs();
-				BaseService baseService = (BaseService) SpringContextUtil.getBean(BaseService.class);
-				switch (operationType) {
-				case "2":// 新增
-					params = CommonUtils.objToMap(args[0]);
-					break;
-				case "3":// 更新
-					params = CommonUtils.objToMap(args[0]);
-					break;
-				case "4":// 删除
-					if (args[0] instanceof Object[]) {// 批量删除
-						Object[] ids = (Object[]) args[0];
-						List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-						for (Object id : ids) {
-							list.add(baseService.findNoTrans(operateClass.value(), id));
-						}
-						params = list;
-					} else {
-						params = baseService.findNoTrans(operateClass.value(), args[0]);
-					}
-					break;
-				case "5":// 保存
-					params = CommonUtils.objToMap(args[0]);
-					break;
-				}
-				if (operateClass != null ) {
-					log.setTableName(baseService.getTable(operateClass.value()));
-				}
-				log.setUpdateParams(params != null ? JSONUtils.toJSONString(params) : null);
-				baseService.insert(log);
+				insertOperateLog(operateLog, operateClass, joinPoint.getArgs());
 			}
 		}
 		return joinPoint.proceed();
+	}
+
+	/**
+	 * 插入操作日志
+	 * @param operateLog 方法上的注解，包含操作类型和操作标题
+	 * @param operateClass 操作实体Class
+	 * @param args 方法参数
+	 */
+	public void insertOperateLog(OperateLog operateLog, OperateClass operateClass, Object[] args) {
+		BaseService baseService = (BaseService) SpringContextUtil.getBean(BaseService.class);
+		SysOperateLog log = new SysOperateLog();
+		log.setLogId(UUIDUtils.getUUID());
+		CurrentUser currentUser = SubjectUtils.getUser();
+		log.setOperateUserId(currentUser.getUserId());
+		log.setOperateUserName(currentUser.getUserName());
+		log.setOperateTime(TimeUtils.getTimestamp());
+		String operationType = operateLog.operationType();
+		log.setOperateType(operationType);
+		log.setOperateName(operateLog.operationName());
+		log.setRequestUrl(request.getServletPath());
+		Object params = null;
+
+		switch (operationType) {
+		case "2":// 新增
+			params = CommonUtils.objToMap(args[0]);
+			break;
+		case "3":// 更新
+			params = CommonUtils.objToMap(args[0]);
+			break;
+		case "4":// 删除
+			if (args[0] instanceof Object[]) {// 批量删除
+				Object[] ids = (Object[]) args[0];
+				List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+				for (Object id : ids) {
+					list.add(baseService.findNoTrans(operateClass.value(), id));
+				}
+				params = list;
+			} else {
+				params = baseService.findNoTrans(operateClass.value(), args[0]);
+			}
+			break;
+		case "5":// 保存
+			params = CommonUtils.objToMap(args[0]);
+			break;
+		}
+		if (operateClass != null) {
+			log.setTableName(baseService.getTable(operateClass.value()));
+		}
+		log.setUpdateParams(params != null ? JSONUtils.toJSONString(params) : null);
+		baseService.insert(log);
 	}
 }
