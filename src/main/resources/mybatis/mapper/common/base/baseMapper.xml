@@ -54,6 +54,10 @@
 	<select id="countByFieldListLike" resultType="long">
 		SELECT COUNT(0) FROM ${table} <where> <foreach item="item" collection="list" separator="and"><if test="item.value != null and item.value !=''">${item.cloumn} LIKE CONCAT('%',#{item.value},'%')</if></foreach></where>
 	</select>
+	
+	<select id="findColumnByTable" resultType="com.foo.manage.common.base.DatabaseColumnExplain">
+		select column_name,column_comment from INFORMATION_SCHEMA.Columns where table_name=#{table} and table_schema=#{databaseName}
+	</select>
 
 	<insert id="insert">
 		INSERT INTO ${table}(${cloumns}) VALUES(<foreach item="item" index="index" collection="list" separator=",">#{item}</foreach>)

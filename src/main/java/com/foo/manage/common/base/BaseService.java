@@ -507,4 +507,14 @@ public abstract class BaseService {
 		String sheetName = (String) map.get("sheetName");// sheet名称
 		return ExcelUtils.getHSSFWorkbook(sheetName, titleLabels, titleNames, rows, null);
 	}
+
+	/**
+	 * 根据表名和数据库名查询字段和注释信息
+	 * @param table 表名
+	 * @param databaseName 数据库名
+	 * @return
+	 */
+	public List<DatabaseColumnExplain> findColumnByTable(String table, String databaseName) {
+		return baseDao.findColumnByTable(table, databaseName);
+	}
 }

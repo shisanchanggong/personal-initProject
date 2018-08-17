@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,6 +15,7 @@ import com.foo.manage.common.utils.PageRequest;
 import com.foo.manage.common.utils.PageResult;
 import com.foo.manage.common.utils.PageResultHelper;
 import com.foo.manage.modules.sys.entity.Department;
+import com.foo.manage.modules.sys.service.DepartmentService;
 
 /**
  * 部门 Controller
@@ -29,6 +31,9 @@ public class DepartmentController extends BaseController<Department> {
 
 	private static final String PREFIX = "/modules/sys/";
 
+	@Autowired
+	private DepartmentService service;
+	
 	@RequestMapping("/departmentListPage")
 	public String departmentListPage() {
 		return PREFIX + "departmentList";
@@ -49,5 +54,11 @@ public class DepartmentController extends BaseController<Department> {
 	public PageResult departmentList(HttpServletRequest request, PageRequest pageReq) {
 		log.info("the called method : departmentList");
 		return new PageResultHelper().exeQuery(Department.class, pageReq);
+	}
+	
+	@RequestMapping("/testTransactional")
+	@ResponseBody
+	public void testTransactional(){
+		service.testTransactional();
 	}
 }

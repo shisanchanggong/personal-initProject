@@ -30,7 +30,7 @@
 				{label : "updateParams", name : "updateParams", hidden : true}, 
 				{label : "操作", name : "operator", align : 'center', sortable : false, formatter: operatorFormatter}
 			],
-			postData : {}
+			postData : getParams()
 		});
 		//初始化加载调整宽度和注册宽度时间
 		resizeWindow();

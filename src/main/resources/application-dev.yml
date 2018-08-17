@@ -3,7 +3,7 @@ blog:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/manage
+    url: jdbc:mysql://localhost:3306/${database.name}
     username: root
     password: 123
   redis:

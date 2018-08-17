@@ -110,4 +110,6 @@ public interface BaseDao {
 
 	long countByFieldListLike(@Param("table") String table, @Param("list") List<Field> fields);
 
+	List<DatabaseColumnExplain> findColumnByTable(@Param("table") String table, @Param("databaseName") String databaseName);
+
 }

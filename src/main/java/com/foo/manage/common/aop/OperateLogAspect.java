@@ -48,7 +48,20 @@ public class OperateLogAspect {
 	public void webLog() {
 
 	}
+	
+	@Pointcut("execution(* com.foo.manage.modules.sys.service.DepartmentInterface.testTransactional(..))")
+	public void test() {
+		
+	}
 
+	@Around("test()")
+	public Object testaround(ProceedingJoinPoint joinPoint) throws Throwable {
+		if (true) {
+			logger.info("测试aop事务。。。");
+		}
+		return joinPoint.proceed();
+	}
+	
 	/**
 	 * 方法调用前触发 记录开始时间
 	 */
@@ -114,7 +127,6 @@ public class OperateLogAspect {
 		log.setOperateName(operateLog.operationName());
 		log.setRequestUrl(request.getServletPath());
 		Object params = null;
-
 		switch (operationType) {
 		case "2":// 新增
 			params = CommonUtils.objToMap(args[0]);
@@ -139,9 +151,14 @@ public class OperateLogAspect {
 			break;
 		}
 		if (operateClass != null) {
-			log.setTableName(baseService.getTable(operateClass.value()));
+			String table = baseService.getTable(operateClass.value());
+			log.setTableName(table);
 		}
 		log.setUpdateParams(params != null ? JSONUtils.toJSONString(params) : null);
 		baseService.insert(log);
+	}
+
+	public static void main(String[] args) {
+		
 	}
 }
