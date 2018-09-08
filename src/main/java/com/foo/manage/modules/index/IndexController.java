@@ -107,16 +107,6 @@ public class IndexController {
 	}
 
 	public static void main(String[] args) throws IOException {
-		/*
-		 * URL url = new
-		 * URL("http://localhost:8080/manage/user/list?page=1&rows=9999");
-		 * HttpURLConnection connection = (HttpURLConnection)
-		 * url.openConnection(); connection.connect(); BufferedReader br = new
-		 * BufferedReader(new InputStreamReader(connection.getInputStream()));
-		 * StringBuilder result = new StringBuilder(); String line = ""; while
-		 * ((line = br.readLine()) != null) { result.append(line); } br.close();
-		 * connection.disconnect(); System.out.println(result.toString());
-		 */
 		System.out.println(SubjectUtils.getUser());
 	}
 }
